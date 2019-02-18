@@ -1,13 +1,24 @@
 <template>
-    <div class="login">
-        <h3>Восстановление пароля</h3>
-        <form action="">
-            <input v-model="email" type="email" placeholder="Email">
-            <button class="form-button" v-on:click="reset" >Восстановить</button>
-        </form>
-        <p>У вас не аккаунта? <router-link to="/Sign-up">Создать аккаунт</router-link></p>
-        <p>Вспомнили пароль <router-link to="/Login">Войти</router-link></p>
-    </div>
+    <main class="page auth">
+        <div class="auth__content">
+            <p class="auth__title">Восстановление пароля</p>
+            <p class="auth__subtitle">Вышлем ссылку для восстановления на ваш email</p>
+            <form class="auth__form" @submit.prevent="reset">
+                <div class="auth__input-block">
+                     <input v-model="email" type="email" placeholder="Email">
+                </div>
+                <div class="auth__button btn-primary">Восстановить</div>
+                <div class="auth__links">
+                    <div class="auth__link">Есть аккаунт?
+                        <router-link to="/Sign-up">Войти</router-link>
+                    </div>
+                    <div class="auth__link">Нет аккаунта?
+                        <router-link to="/Sign-up">Зарегистрироваться</router-link>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
 </template>
 
 
@@ -24,9 +35,19 @@ export default {
     methods: {
         reset: function() {
             firebase.auth().sendPasswordResetEmail(this.email).then(() => {
-                alert('Письмо отправлено!')
-            }).catch((err) => {
-                alert('Ошибка отправки' + err.message)
+                swal('Отправил','Письмо поступит на указанный email', 'success')
+        }).catch((err) => {
+                switch(err.code) {
+                    case 'auth/user-not-found':
+                        swal('', 'Пользователь не найден', 'error')
+                        break;
+                    case 'auth/invalid-email-verified':
+                        swal('', 'Неверный email', 'error')
+                        break;
+                    case 'auth/invalid-email':
+                        swal('', 'Неверный формат email', 'error')
+                        break;
+                }
             })
         }
     }

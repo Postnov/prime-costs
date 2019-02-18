@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/components/Home.vue';
+import Index from '@/views/Index.vue';
+import BuyList from '@/views/Buy-list.vue';
+import SupportProject from '@/views/Support-project.vue';
+import Support from '@/views/Support.vue';
 import Login from "@/views/Login"
 import SignUp from "@/views/Sign-up"
 import PrimeCost from "@/views/Prime-cost"
@@ -14,7 +18,26 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/Login'
+      redirect: '/Index',
+      component: Index,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/Buy-list',
+      component: BuyList,
+      name: 'BuyList'
+    },
+    {
+      path: '/Support',
+      component: Support,
+      name: 'Support'
+    },
+    {
+      path: '/Support-project',
+      component: SupportProject,
+      name: 'Support-project'
     },
     {
       path: '/Home',
@@ -23,6 +46,11 @@ const router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/Index',
+      name: 'Index',
+      component: Index,
     },
     {
       path: '/Login',
@@ -57,8 +85,8 @@ router.beforeEach((to, from, next) => {
   const currentUser = firebase.auth().currentUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
-  if (requiresAuth && !currentUser) next('login');
-  else if (!requiresAuth && currentUser && (to.name == 'Login' || to.name == 'Sign-up')) next('home');
+  if (requiresAuth && !currentUser) next('index');
+  else if (!requiresAuth && currentUser && (to.name == 'Login' || to.name == 'Sign-up' || to.name == 'Index')) next('home');
   else next();
 });
 
